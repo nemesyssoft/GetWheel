@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GetWheel+CoreDataModel.h"
+#import "Person+CoreDataClass.h"
 
 @interface DetailViewController : UIViewController
 
-@property (strong, nonatomic) Event *detailItem;
+@property (strong, nonatomic) Person *detailItem;
 @property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
 
 @end

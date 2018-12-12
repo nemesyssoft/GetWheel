@@ -17,7 +17,7 @@
 - (void)configureView {
     // Update the user interface for the detail item.
     if (self.detailItem) {
-        self.detailDescriptionLabel.text = self.detailItem.timestamp.description;
+        self.detailDescriptionLabel.text = self.detailItem.name;
     }
 }
 
@@ -31,7 +31,7 @@
 
 #pragma mark - Managing the detail item
 
-- (void)setDetailItem:(Event *)newDetailItem {
+- (void)setDetailItem:(Person *)newDetailItem {
     if (_detailItem != newDetailItem) {
         _detailItem = newDetailItem;
         

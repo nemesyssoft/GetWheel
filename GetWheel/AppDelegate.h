@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
+#define APP_DELEGATE ((AppDelegate *)[UIApplication sharedApplication].delegate)
+
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
@@ -17,6 +19,8 @@
 
 - (void)saveContext;
 
+- (void)startNetworkIndicatorForInstance:(id)anInstance;
+- (void)stopNetworkIndicatorForInstance:(id)anInstance;
 
 @end
 

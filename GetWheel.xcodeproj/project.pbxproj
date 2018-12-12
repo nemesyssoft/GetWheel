@@ -17,6 +17,11 @@
 		4D19250921BEF79400BF0812 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19250821BEF79400BF0812 /* main.m */; };
 		4D19251321BEF79400BF0812 /* GetWheelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19251221BEF79400BF0812 /* GetWheelTests.m */; };
 		4D19251E21BEF79400BF0812 /* GetWheelUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19251D21BEF79400BF0812 /* GetWheelUITests.m */; };
+		4D4E858521C04858003456F9 /* DataDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4E858421C04858003456F9 /* DataDownloader.m */; };
+		4D4E858921C04F52003456F9 /* DataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4E858821C04F52003456F9 /* DataSource.m */; };
+		4D4E858E21C0666A003456F9 /* Person+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4E858C21C0666A003456F9 /* Person+CoreDataClass.m */; };
+		4D4E858F21C0666A003456F9 /* Person+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4E858D21C0666A003456F9 /* Person+CoreDataProperties.m */; };
+		4D4E859321C07B8F003456F9 /* PersonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4E859221C07B8F003456F9 /* PersonTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +61,17 @@
 		4D19251921BEF79400BF0812 /* GetWheelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GetWheelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D19251D21BEF79400BF0812 /* GetWheelUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GetWheelUITests.m; sourceTree = "<group>"; };
 		4D19251F21BEF79400BF0812 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4D4E858321C04858003456F9 /* DataDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataDownloader.h; sourceTree = "<group>"; };
+		4D4E858421C04858003456F9 /* DataDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataDownloader.m; sourceTree = "<group>"; };
+		4D4E858621C04D67003456F9 /* GetWheelPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetWheelPrefixHeader.pch; sourceTree = "<group>"; };
+		4D4E858721C04F52003456F9 /* DataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataSource.h; sourceTree = "<group>"; };
+		4D4E858821C04F52003456F9 /* DataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataSource.m; sourceTree = "<group>"; };
+		4D4E858A21C0666A003456F9 /* Person+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Person+CoreDataProperties.h"; sourceTree = "<group>"; };
+		4D4E858B21C0666A003456F9 /* Person+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Person+CoreDataClass.h"; sourceTree = "<group>"; };
+		4D4E858C21C0666A003456F9 /* Person+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Person+CoreDataClass.m"; sourceTree = "<group>"; };
+		4D4E858D21C0666A003456F9 /* Person+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Person+CoreDataProperties.m"; sourceTree = "<group>"; };
+		4D4E859121C07B8F003456F9 /* PersonTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersonTableViewCell.h; sourceTree = "<group>"; };
+		4D4E859221C07B8F003456F9 /* PersonTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PersonTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +102,7 @@
 		4D1924E721BEF79200BF0812 = {
 			isa = PBXGroup;
 			children = (
+				4D4E859021C06670003456F9 /* CoreData */,
 				4D1924F221BEF79200BF0812 /* GetWheel */,
 				4D19251121BEF79400BF0812 /* GetWheelTests */,
 				4D19251C21BEF79400BF0812 /* GetWheelUITests */,
@@ -118,6 +135,13 @@
 				4D19250721BEF79400BF0812 /* Info.plist */,
 				4D19250821BEF79400BF0812 /* main.m */,
 				4D1924F621BEF79200BF0812 /* GetWheel.xcdatamodeld */,
+				4D4E858321C04858003456F9 /* DataDownloader.h */,
+				4D4E858421C04858003456F9 /* DataDownloader.m */,
+				4D4E858621C04D67003456F9 /* GetWheelPrefixHeader.pch */,
+				4D4E858721C04F52003456F9 /* DataSource.h */,
+				4D4E858821C04F52003456F9 /* DataSource.m */,
+				4D4E859121C07B8F003456F9 /* PersonTableViewCell.h */,
+				4D4E859221C07B8F003456F9 /* PersonTableViewCell.m */,
 			);
 			path = GetWheel;
 			sourceTree = "<group>";
@@ -138,6 +162,17 @@
 				4D19251F21BEF79400BF0812 /* Info.plist */,
 			);
 			path = GetWheelUITests;
+			sourceTree = "<group>";
+		};
+		4D4E859021C06670003456F9 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				4D4E858A21C0666A003456F9 /* Person+CoreDataProperties.h */,
+				4D4E858B21C0666A003456F9 /* Person+CoreDataClass.h */,
+				4D4E858C21C0666A003456F9 /* Person+CoreDataClass.m */,
+				4D4E858D21C0666A003456F9 /* Person+CoreDataProperties.m */,
+			);
+			name = CoreData;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -274,6 +309,11 @@
 				4D1924F821BEF79200BF0812 /* GetWheel.xcdatamodeld in Sources */,
 				4D1924FB21BEF79200BF0812 /* MasterViewController.m in Sources */,
 				4D1924F521BEF79200BF0812 /* AppDelegate.m in Sources */,
+				4D4E859321C07B8F003456F9 /* PersonTableViewCell.m in Sources */,
+				4D4E858E21C0666A003456F9 /* Person+CoreDataClass.m in Sources */,
+				4D4E858921C04F52003456F9 /* DataSource.m in Sources */,
+				4D4E858521C04858003456F9 /* DataDownloader.m in Sources */,
+				4D4E858F21C0666A003456F9 /* Person+CoreDataProperties.m in Sources */,
 				4D1924FE21BEF79200BF0812 /* DetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -447,6 +487,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9BP56K988V;
+				GCC_PREFIX_HEADER = GetWheel/GetWheelPrefixHeader.pch;
 				INFOPLIST_FILE = GetWheel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -464,6 +505,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9BP56K988V;
+				GCC_PREFIX_HEADER = GetWheel/GetWheelPrefixHeader.pch;
 				INFOPLIST_FILE = GetWheel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

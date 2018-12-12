@@ -10,7 +10,14 @@
 #import "DetailViewController.h"
 #import "MasterViewController.h"
 
+#define DELAY_TO_STOP_ACTIVITY_INDICATOR 3.0f
+
 @interface AppDelegate () <UISplitViewControllerDelegate>
+
+@property (nonatomic, strong) NSRecursiveLock *networkClientsLock;
+@property (nonatomic, strong) NSMutableDictionary *networkIndicatorClients;
+@property (nonatomic, assign) NSInteger networkIndicatorStack;
+@property (nonatomic, strong) DataSource *dataSource;
 
 @end
 
@@ -27,6 +34,15 @@
     UINavigationController *masterNavigationController = splitViewController.viewControllers[0];
     MasterViewController *controller = (MasterViewController *)masterNavigationController.topViewController;
     controller.managedObjectContext = self.persistentContainer.viewContext;
+    DataSource *sharedDataSource = [DataSource sharedDataSource];
+    sharedDataSource.managedObjectContext = self.persistentContainer.viewContext;
+    if ([sharedDataSource personCount] == 0) {
+        DataDownloader *dataDownloader = [[DataDownloader alloc] init];
+        [dataDownloader downloadDataWithCompletionHandler:^(NSArray * _Nonnull results) {
+            NSArray *persons = results;
+            [sharedDataSource savePersons:persons];
+        }];
+    }
     return YES;
 }
 
@@ -114,6 +130,105 @@
         NSLog(@"Unresolved error %@, %@", error, error.userInfo);
         abort();
     }
+}
+
+#pragma mark - Service Methods
+
+- (void)startNetworkIndicatorForInstance:(id)anInstance
+{
+    NSString *addressAsString = [NSString stringWithFormat:@"%p", anInstance];
+    //    NELog(@"                 instance: %@ @ %@", [anInstance class], addressAsString);
+    if (addressAsString == nil) {
+        NELog(@"Received a nil addressAsString. Aborting");
+        return;
+    }
+    NSNumber *numberOfInvocations = [self.networkIndicatorClients objectForKey:addressAsString];
+    if (numberOfInvocations == nil) {
+        numberOfInvocations = [NSNumber numberWithInteger:1];
+        [self.networkClientsLock lock];
+        [self.networkIndicatorClients setObject:numberOfInvocations forKey:addressAsString];
+        [self.networkClientsLock unlock];
+    }
+    else {
+        [self.networkClientsLock lock];
+        [self.networkIndicatorClients setObject:[NSNumber numberWithLong:numberOfInvocations.integerValue + 1] forKey:addressAsString];
+        [self.networkClientsLock unlock];
+    }
+    [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(reallyStopNetworkIndicatorFromTimer:) object:nil];
+    if ( ! [NSThread isMainThread]) {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            self->_networkIndicatorStack++;
+            if (self->_networkIndicatorStack > 0 && ! [UIApplication sharedApplication].networkActivityIndicatorVisible)
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        }];
+    }
+    else {
+        _networkIndicatorStack++;
+        if (_networkIndicatorStack > 0 && ! [UIApplication sharedApplication].networkActivityIndicatorVisible)
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    }
+}
+
+- (void)stopNetworkIndicatorForInstance:(id)anInstance
+{
+    NSString *addressAsString = [[NSString stringWithFormat:@"%p", anInstance] copy];
+    [self.networkClientsLock lock];
+    NSNumber *numberOfInvocations = [self.networkIndicatorClients objectForKey:addressAsString];
+    [self.networkClientsLock unlock];
+    if (numberOfInvocations == nil) {
+        NELog(@"Instance of class '%@' @ %@ invoked stopNetworkIndicatorForInstance: without calling startNetworkIndicatorForInstance:", [anInstance class], addressAsString);
+    }
+    if (numberOfInvocations != nil) {
+        if ([numberOfInvocations intValue] > 1) {
+            [self.networkClientsLock lock];
+            [self.networkIndicatorClients setObject:[NSNumber numberWithInt:[numberOfInvocations intValue] - 1] forKey:addressAsString];
+            [self.networkClientsLock unlock];
+        }
+        else {
+            [self.networkClientsLock lock];
+            [self.networkIndicatorClients removeObjectForKey:addressAsString];
+            [self.networkClientsLock unlock];
+        }
+    }
+    if ( ! [NSThread isMainThread]) {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            self->_networkIndicatorStack--;
+            if (self->_networkIndicatorStack < 0) {
+                self->_networkIndicatorStack = 0;
+            }
+            if (self->_networkIndicatorStack == 0) {
+                [self stopNetworkIndicatorOnMainThread];
+            }
+        }];
+    }
+    else {
+        _networkIndicatorStack--;
+        if (_networkIndicatorStack < 0) {
+            _networkIndicatorStack = 0;
+        }
+        if (_networkIndicatorStack == 0) {
+            [self stopNetworkIndicatorOnMainThread];
+        }
+    }
+}
+
+#pragma mark - Private Methods
+
+- (void)reallyStopNetworkIndicatorFromTimer:(NSTimer *)aTimer
+{
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [aTimer invalidate];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    }];
+}
+
+- (void)stopNetworkIndicatorOnMainThread
+{
+    // In case of very short start and stop, we don't want to have the indicator flickering so when we get a stop, we delay
+    // the hiding by one second
+    [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(reallyStopNetworkIndicatorFromTimer:) object:NULL];
+    //    NELog(@"About to perform reallyStopNetworkIndicatorFromTimer: in 3 seconds");
+    [self performSelector:@selector(reallyStopNetworkIndicatorFromTimer:) withObject:NULL afterDelay:DELAY_TO_STOP_ACTIVITY_INDICATOR];
 }
 
 @end
