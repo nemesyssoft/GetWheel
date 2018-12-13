@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) IBOutlet UILabel *medalCountLabel;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView *activityView;
 
+@property (nonatomic, assign) NSInteger displayedUserID;
+
 @end
 
 NS_ASSUME_NONNULL_END

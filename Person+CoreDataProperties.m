@@ -16,6 +16,7 @@
 }
 
 @dynamic name;
+@dynamic reputation;
 @dynamic gravatarURL;
 @dynamic bronzeMedals;
 @dynamic silverMedals;

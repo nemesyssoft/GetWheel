@@ -17,7 +17,16 @@
 - (void)configureView {
     // Update the user interface for the detail item.
     if (self.detailItem) {
-        self.detailDescriptionLabel.text = self.detailItem.name;
+        self.nameLabel.text = self.detailItem.name;
+        NSString *photoFilename = [NSString stringWithFormat:@"%ld.jpg", (long)self.detailItem.user_id];
+        NSURL *photoPath = [APP_DELEGATE.picturesDirectory URLByAppendingPathComponent:photoFilename];
+        NSData *imageData = [NSData dataWithContentsOfURL:photoPath];
+        UIImage *photoImage = [UIImage imageWithData:imageData];
+        self.pictureView.image = photoImage;
+        self.reputationLabel.text = [NSString stringWithFormat:@"%lld", self.detailItem.reputation];
+        self.goldCountLabel.text = [NSString stringWithFormat:@"%hd", self.detailItem.goldMedals];
+        self.silverCountLabel.text = [NSString stringWithFormat:@"%hd", self.detailItem.silverMedals];
+        self.bronzeCountLabel.text = [NSString stringWithFormat:@"%hd", self.detailItem.bronzeMedals];
     }
 }
 

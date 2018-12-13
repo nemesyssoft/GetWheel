@@ -34,10 +34,16 @@
     UINavigationController *masterNavigationController = splitViewController.viewControllers[0];
     MasterViewController *controller = (MasterViewController *)masterNavigationController.topViewController;
     controller.managedObjectContext = self.persistentContainer.viewContext;
+    
+    NSError *error = nil;
+    self.picturesDirectory = [[NSFileManager defaultManager] URLForDirectory:NSPicturesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
+    if (error != nil) {
+        NELog(@"error %ld while trying to get the URL for the pictures directory: %@", (long)error.code, error.localizedDescription);
+    }
     DataSource *sharedDataSource = [DataSource sharedDataSource];
     sharedDataSource.managedObjectContext = self.persistentContainer.viewContext;
     if ([sharedDataSource personCount] == 0) {
-        DataDownloader *dataDownloader = [[DataDownloader alloc] init];
+        DataDownloader *dataDownloader = [DataDownloader sharedDataDownloader];
         [dataDownloader downloadDataWithCompletionHandler:^(NSArray * _Nonnull results) {
             NSArray *persons = results;
             [sharedDataSource savePersons:persons];
@@ -230,5 +236,8 @@
     //    NELog(@"About to perform reallyStopNetworkIndicatorFromTimer: in 3 seconds");
     [self performSelector:@selector(reallyStopNetworkIndicatorFromTimer:) withObject:NULL afterDelay:DELAY_TO_STOP_ACTIVITY_INDICATOR];
 }
+
+#pragma mark - Public Methods
+
 
 @end

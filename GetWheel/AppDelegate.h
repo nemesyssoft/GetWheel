@@ -17,6 +17,9 @@
 
 @property (readonly, strong) NSPersistentContainer *persistentContainer;
 
+@property (nonatomic, strong) NSURL *picturesDirectory;
+
+
 - (void)saveContext;
 
 - (void)startNetworkIndicatorForInstance:(id)anInstance;

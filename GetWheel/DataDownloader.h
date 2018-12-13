@@ -12,7 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DataDownloader : NSObject <NSURLSessionTaskDelegate, NSURLSessionDownloadDelegate>
 
++ (id)sharedDataDownloader;
+
 - (void)downloadDataWithCompletionHandler:(void (^ __nonnull)(NSArray *results))completion;
+- (void)downloadPictureForUserID:(NSInteger)userID withPictureURL:(NSURL *)pictureURL completion:(void (^)(NSInteger userID))completion;
 
 @end
 

@@ -10,6 +10,8 @@
 
 #define DEFAULT_URL @"https://api.stackexchange.com/2.2/users?site=stackoverflow"
 
+static DataDownloader *sharedDataDownloader = nil;
+
 @interface DataDownloader ()
 
 @property (nonatomic, assign) NSInteger downloadRetry;
@@ -19,12 +21,19 @@
 
 @implementation DataDownloader
 
-- (instancetype)init {
-    if (self = [super init]) {
-        self.downloadQueue = [[NSOperationQueue alloc] init];
-        self.downloadQueue.maxConcurrentOperationCount = 1;
-    }
-    return self;
+
++ (id)sharedDataDownloader
+{
+    static dispatch_once_t dataDownloaderPredicate;
+    dispatch_once(&dataDownloaderPredicate, ^{
+        sharedDataDownloader = [[super allocWithZone:NULL] init];
+        if (sharedDataDownloader != nil) {
+            sharedDataDownloader.downloadQueue = [[NSOperationQueue alloc] init];
+            sharedDataDownloader.downloadQueue.maxConcurrentOperationCount = 1;
+        }
+    });
+    
+    return sharedDataDownloader;
 }
 
 - (void)downloadDataWithCompletionHandler:(void (^ __nonnull)(NSArray *results))completion {
@@ -70,6 +79,42 @@
                                                            [APP_DELEGATE stopNetworkIndicatorForInstance:self];
                                                        }];
                                                    }];
+    [downloadTask resume];
+}
+
+- (void)downloadPictureForUserID:(NSInteger)userID withPictureURL:(NSURL *)pictureURL completion:(void (^)(NSInteger userID))completion {
+    [APP_DELEGATE startNetworkIndicatorForInstance:self];
+    __block NSURL *picturePath = APP_DELEGATE.picturesDirectory;
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfiguration.timeoutIntervalForRequest = 60.0f;
+    NSURLSession *urlSession = [NSURLSession sessionWithConfiguration:sessionConfiguration
+                                                             delegate:self
+                                                        delegateQueue:self.downloadQueue];
+    NSURL *url = pictureURL;
+    NSURLSessionDataTask *downloadTask = [urlSession dataTaskWithURL:url
+                                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                       if (error != nil) {
+                                                           NELog(@"error %ld while trying to download picture at '%@': %@",
+                                                                 (long)error.code,
+                                                                 pictureURL,
+                                                                 error.description);
+                                                       }
+                                                       else {
+                                                           picturePath = [picturePath URLByAppendingPathComponent:[NSString stringWithFormat:@"%ld.jpg", (long)userID]];
+                                                           NSError *error = nil;
+                                                           if ( ! [data writeToURL:picturePath options:NSDataWritingAtomic error:&error]) {
+                                                               NELog(@"error %ld while trying to save picture file at '%@': %@", (long)error.code, picturePath, error.description);
+                                                           }
+                                                           else {
+                                                               completion(userID);
+                                                           }
+                                                       }
+                                                       [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                                           NELog(@"finished downloading picture at '%@'", pictureURL);
+                                                           [APP_DELEGATE stopNetworkIndicatorForInstance:self];
+                                                       }];
+                                                   }];
+    NELog(@"starting download of picture at '%@'", url);
     [downloadTask resume];
 }
 

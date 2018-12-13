@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 + (id)sharedDataSource;
+
 - (NSInteger)personCount;
 - (void)savePersons:(NSArray *)persons;
 

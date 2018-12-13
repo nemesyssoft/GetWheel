@@ -90,6 +90,30 @@
     NSString *medalCounts = [NSString stringWithFormat:@"%lld \U0001F949 %hd \U0001F948 %hd \U0001F949 %hd", person.reputation, person.goldMedals, person.silverMedals, person.bronzeMedals];
     cell.medalCountLabel.text = medalCounts;
     cell.nameLabel.text = person.name;
+    cell.displayedUserID = person.user_id;
+    NSString *photoFilename = [NSString stringWithFormat:@"%ld.jpg", (long)person.user_id];
+    NSURL *photoPath = [APP_DELEGATE.picturesDirectory URLByAppendingPathComponent:photoFilename];
+    NSData *imageData = [NSData dataWithContentsOfURL:photoPath];
+    UIImage *photoImage = [UIImage imageWithData:imageData];
+    if (photoImage == nil) {
+        [[DataDownloader sharedDataDownloader] downloadPictureForUserID:person.user_id withPictureURL:[NSURL URLWithString:person.gravatarURL] completion:^(NSInteger userID) {
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                for (PersonTableViewCell *aCell in self.tableView.visibleCells) {
+                    if (aCell.displayedUserID == userID) {
+                        NSIndexPath *cellIndexPath = [self.tableView indexPathForCell:aCell];
+                        [self.tableView reloadRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationNone];
+                        break;
+                    }
+                }
+            }];
+        }];
+    }
+    else {
+        if (photoImage.size.height > 64.0f || photoImage.size.width > 64.0f) {
+            photoImage = [self resizeImage:photoImage imageSize:CGSizeMake(64.0f, 64.0f)];
+        }
+        cell.imageView.image = photoImage;
+    }
     if (cell.imageView.image == nil) {
         cell.activityView.hidden = NO;
         [cell.activityView startAnimating];
@@ -184,13 +208,15 @@
     [self.tableView endUpdates];
 }
 
-/*
-// Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed. 
- 
- - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    // In the simplest, most efficient, case, reload the table view.
-    [self.tableView reloadData];
+#pragma mark - Private Methods
+
+-(UIImage*)resizeImage:(UIImage *)image imageSize:(CGSize)size {
+    UIGraphicsBeginImageContext(size);
+    [image drawInRect:CGRectMake(0,0,size.width,size.height)];
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    //here is the scaled image which has been changed to the size specified
+    UIGraphicsEndImageContext();
+    return newImage;
 }
- */
 
 @end
